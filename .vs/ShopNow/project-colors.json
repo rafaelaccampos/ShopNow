@@ -1,0 +1,21 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "14bffe99-9892-430b-8b83-77528a2a179f": {
+      "ProjectGuid": "14bffe99-9892-430b-8b83-77528a2a179f",
+      "DisplayName": "ShopNow",
+      "ColorIndex": 0
+    },
+    "ddefaf50-d62b-46ad-9ed9-13705a93305b": {
+      "ProjectGuid": "ddefaf50-d62b-46ad-9ed9-13705a93305b",
+      "DisplayName": "ShopNow.UnityTests",
+      "ColorIndex": 1
+    },
+    "041c1c48-993e-4269-b53a-fbf2ac453bc9": {
+      "ProjectGuid": "041c1c48-993e-4269-b53a-fbf2ac453bc9",
+      "DisplayName": "ShopNow.Tests",
+      "ColorIndex": 2
+    }
+  },
+  "NextColorIndex": 3
+}
