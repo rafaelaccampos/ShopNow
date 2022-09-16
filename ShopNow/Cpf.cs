@@ -1,77 +1,83 @@
-﻿namespace ShopNow
+﻿using System.Text.RegularExpressions;
+
+namespace ShopNow
 {
     public class Cpf
     {
-        public bool Validate(string str)
+        private const int VALID_CPF_LENGTH = 11;
+        private const int FACTOR_FIRST_VERIFIER_DIGIT = 10;
+        private const int FACTOR_SECOND_VERIFIER_DIGIT = 11;
+
+        private string RemoveMaskCpf(string cpf)
         {
-            if (str != null)
+            return cpf
+                .Replace(".", "")
+                .Replace(".", "")
+                .Replace("-", "")
+                .Replace(" ", "");
+        }
+
+        private bool HasOnlyNumbers(string value)
+        {
+            return Regex.IsMatch(value, @"^\d+$");
+        }
+
+        private bool AreAllDigitsEqual(string cpf)
+        {
+            return cpf.All(c => c == cpf.First());
+        }
+
+        public string ExtractVerifierDigit(string cpf)
+        {
+            return cpf.Substring(cpf.Length - 2);
+        }
+
+        public int CalculateDigit(string cpf, int factor)
+        {
+            var total = 0;
+            foreach(var digit in cpf)
             {
-                if (str != "")
+                if(factor > 1)
                 {
-                    if (str.Length >= 11 || str.Length <= 14)
-                    {
-
-                        str = str
-                            .Replace(".", "")
-                            .Replace(".", "")
-                            .Replace("-", "")
-                            .Replace(" ", "");
-
-                        if (!str.All(c => c == str.First()))
-                        {
-                            try
-                            {
-                                int d1, d2;
-                                int dg1, dg2, rest;
-                                int digito;
-                                string nDigResult;
-                                d1 = d2 = 0;
-                                dg1 = dg2 = rest = 0;
-
-                                for (var nCount = 1; nCount < str.Length-1; nCount++)
-                                {
-                                    // if (isNaN(parseInt(str.substring(nCount -1, nCount)))) {
-                                    // 	return false;
-                                    // } else {
-
-                                    digito = int.Parse(str.Substring(nCount-1, 1));
-                                    d1 = d1 + (11 - nCount) * digito;
-
-                                    d2 = d2 + (12 - nCount) * digito;
-                                    // }
-                                };
-
-                                rest = (d1 % 11);
-
-                                dg1 = (rest < 2) ? dg1 = 0 : 11 - rest;
-                                d2 += 2 * dg1;
-                                rest = (d2 % 11);
-                                if (rest < 2)
-                                    dg2 = 0;
-                                else
-                                    dg2 = 11 - rest;
-
-                                var nDigVerific = str.Substring(str.Length - 2, 2);
-                                nDigResult = "" + dg1 + "" + dg2;
-                                return nDigVerific == nDigResult;
-                            }
-                            catch (Exception e)
-                            {
-                                Console.WriteLine("Erro !" + e);
-
-                                return false;
-                            }
-                        }
-                        else return false;
-
-
-                    }
-                    else return false;
+                    total += int.Parse(digit.ToString()) * factor--;
                 }
-
-                return true;
             }
-            else return false;
+
+            var rest = total % 11;
+            return (rest < 2) ? 0 : (11 - rest);
+        }
+
+        public bool Validate(string rawCpf)
+        {
+            if(string.IsNullOrEmpty(rawCpf))
+            {
+                return false;
+            }
+
+            var cpf = RemoveMaskCpf(rawCpf);
+
+            if (!HasOnlyNumbers(cpf))
+            {
+                return false;
+            }
+
+            if (cpf.Length != VALID_CPF_LENGTH)
+            {
+                return false;
+            }
+
+            if (AreAllDigitsEqual(cpf))
+            {
+                return false;
+            }
+
+            var firstVerifierDigit = CalculateDigit(cpf, FACTOR_FIRST_VERIFIER_DIGIT);
+            var secondVerifierDigit = CalculateDigit(cpf, FACTOR_SECOND_VERIFIER_DIGIT);
+
+            var verifierDigit = ExtractVerifierDigit(cpf);
+            var calculatedVerifierDigit = $"{firstVerifierDigit}{secondVerifierDigit}";
+
+            return calculatedVerifierDigit == verifierDigit;
         }
     }
 }
