@@ -29,6 +29,7 @@ namespace ShopNow.Tests
         
         [TestCase("111.444.777-45")]
         [TestCase("111.444.777-36")]
+        [TestCase("111.444.777-26")]
         public void ShouldBeAbleToValidateAnInvalidCpfWithLastDigitsInvalid(string invalidCpf)
         {
             var cpf = new Cpf();
